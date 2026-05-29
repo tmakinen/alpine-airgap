@@ -34,7 +34,8 @@ cdrkit
 dvd+rw-tools
 linux-modules-extra
 EOF
-tar czf "${tmpdir}/iso/airgap.apkovl.tar.gz" "${tmpdir}/apkovl/etc"
+tar --owner=0 --group=0 -C "${tmpdir}/apkovl" -zcvf \
+	"${tmpdir}/iso/airgap.apkovl.tar.gz" .
 
 echo "Configuring boot loader..."
 sed -i \
