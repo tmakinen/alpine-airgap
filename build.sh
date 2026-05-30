@@ -25,12 +25,14 @@ xorriso \
     -rollback_end
 
 echo "Creating custom configuration overlay..."
-mkdir -p \
-    "${tmpdir}/apkovl/etc/apk" \
-    "${tmpdir}/apkovl/etc/runlevels/boot"
-echo "airgap" > "${tmpdir}/apkovl/etc/hostname"
-ln -sf "/etc/init.d/hostname" "${tmpdir}/apkovl/etc/runlevels/boot/hostname"
-cat <<EOF > "${tmpdir}/apkovl/etc/apk/world"
+apkovl="${tmpdir}/apkovl"
+
+mkdir -p "${apkovl}/etc/runlevels/boot"
+echo "airgap" > "${apkovl}/etc/hostname"
+ln -sf "/etc/init.d/hostname" "${apkovl}/etc/runlevels/boot/hostname"
+
+mkdir -p "${apkovl}/etc/apk"
+cat <<EOF > "${apkovl}//etc/apk/world"
 alpine-base
 cdrkit
 dvd+rw-tools
@@ -38,7 +40,8 @@ linux-lts
 openssh-client
 openssl
 EOF
-tar --owner=0 --group=0 -C "${tmpdir}/apkovl" -zcvf \
+
+tar --owner=0 --group=0 -C "${apkovl}/" -zcvf \
     "${tmpdir}/iso/localhost.apkovl.tar.gz" .
 
 echo "Configuring boot loader..."
