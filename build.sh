@@ -73,6 +73,19 @@ EOF
 ln -s "/etc/init.d/local" "${apkovl}/etc/runlevels/default/local"
 chmod +x "${apkovl}/etc/local.d/encrypted-workspace.start"
 
+cat <<EOF > "${apkovl}/etc/motd"
+
+# ALPINE LINUX - VOLATILE WORKSTATION
+
+ * Security:  All operations run entirely within volatile memory.
+ * Workspace: Encrypted /workspace is automatically destroyed on poweroff.
+ * Network:   Fully isolated airgapped host environment.
+
+ WARNING: Any power loss, system reboot, or crash will permanently
+          and instantly destroy all data residing within /workspace.
+
+EOF
+
 mkdir -p "${apkovl}/etc/apk"
 cat <<EOF > "${apkovl}/etc/apk/world"
 alpine-base
