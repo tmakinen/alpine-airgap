@@ -74,7 +74,7 @@ ln -s "/etc/init.d/local" "${apkovl}/etc/runlevels/default/local"
 chmod +x "${apkovl}/etc/local.d/encrypted-workspace.start"
 
 mkdir -p "${apkovl}/etc/apk"
-cat <<EOF > "${apkovl}//etc/apk/world"
+cat <<EOF > "${apkovl}/etc/apk/world"
 alpine-base
 cdrkit
 cryptsetup
