@@ -25,22 +25,24 @@ xorriso \
     -rollback_end
 
 echo "Creating custom configuration overlay..."
-mkdir -p "${tmpdir}/apkovl/etc/apk"
+mkdir -p \
+    "${tmpdir}/apkovl/etc/apk" \
+    "${tmpdir}/apkovl/etc/runlevels/boot"
 echo "airgap" > "${tmpdir}/apkovl/etc/hostname"
+ln -sf "/etc/init.d/hostname" "${tmpdir}/apkovl/etc/runlevels/boot/hostname"
 cat <<EOF > "${tmpdir}/apkovl/etc/apk/world"
-openssl
-openssh-client
+alpine-base
 cdrkit
 dvd+rw-tools
-linux-modules-extra
+linux-lts
+openssh-client
+openssl
 EOF
 tar --owner=0 --group=0 -C "${tmpdir}/apkovl" -zcvf \
-	"${tmpdir}/iso/airgap.apkovl.tar.gz" .
+    "${tmpdir}/iso/localhost.apkovl.tar.gz" .
 
 echo "Configuring boot loader..."
-sed -i \
-    -e '/^DEFAULT /s/$$/ -ram/' \
-    -e '/APPEND/s/$$/ apkovl=\/airgap-ca.apkovl.tar.gz toram/' \
+sed -i -e 's/^\(APPEND .*\)$/\1toram/' \
     "${tmpdir}/iso/boot/syslinux/syslinux.cfg"
 
 echo "Building new ISO image..."
