@@ -51,8 +51,10 @@ permit nopass airgap as root cmd poweroff
 permit nopass airgap as root cmd reboot
 EOF
 cat <<EOF > "${apkovl}/etc/profile.d/reboot.sh"
-alias poweroff="doas poweroff"
-alias reboot="doas reboot"
+if [ "$(id -u)" != "0" ]; then
+    alias poweroff="doas poweroff"
+    alias reboot="doas reboot"
+fi
 EOF
 
 mkdir -p "${apkovl}/etc/init.d"
