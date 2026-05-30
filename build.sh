@@ -31,14 +31,19 @@ mkdir -p "${apkovl}/etc/runlevels/boot"
 echo "airgap" > "${apkovl}/etc/hostname"
 ln -sf "/etc/init.d/hostname" "${apkovl}/etc/runlevels/boot/hostname"
 
+echo 'KEYMAP="/usr/share/bkeymaps/fi/fi-winkeys.bmap.gz"' > "${apkovl}/etc/loadkmap"
+ln -sf "/etc/init.d/loadkmap" "${apkovl}/etc/runlevels/boot/loadkmap"
+
 mkdir -p "${apkovl}/etc/apk"
 cat <<EOF > "${apkovl}//etc/apk/world"
 alpine-base
 cdrkit
 dvd+rw-tools
+kbd-bkeymaps
 linux-lts
 openssh-client
 openssl
+setup-keymap
 EOF
 
 tar --owner=0 --group=0 -C "${apkovl}/" -zcvf \
