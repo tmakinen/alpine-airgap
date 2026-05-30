@@ -42,15 +42,15 @@ tar zxvf "${tmpdir}"/iso/apks/x86_64/alpine-baselayout-data-*.apk -C "${apkovl}"
 echo "airgap:x:1000:" >> "${apkovl}/etc/group"
 echo "airgap:x:1000:1000:Airgap User:/workspace:/bin/sh" >> "${apkovl}/etc/passwd"
 echo "airgap:::0:::::" >> "${apkovl}/etc/shadow"
-sed -i -e 's/^root:/root:\!/' "${apkovl}/etc/shadow"
+#sed -i -e 's/^root:/root:\!/' "${apkovl}/etc/shadow"
 
 mkdir -p "${apkovl}/etc/doas.d" "${apkovl}/etc/profile.d"
-cat <<EOF > "${apkovl}/etc/doas.d/doas.conf"
+cat <<"EOF" > "${apkovl}/etc/doas.d/doas.conf"
 permit persist :airgap
 permit nopass airgap as root cmd poweroff
 permit nopass airgap as root cmd reboot
 EOF
-cat <<EOF > "${apkovl}/etc/profile.d/reboot.sh"
+cat <<"EOF" > "${apkovl}/etc/profile.d/reboot.sh"
 if [ "$(id -u)" != "0" ]; then
     alias poweroff="doas poweroff"
     alias reboot="doas reboot"
@@ -100,7 +100,7 @@ EOF
 chmod +x "${apkovl}/etc/init.d/encrypted-workspace"
 ln -s "/etc/init.d/encrypted-workspace" "${apkovl}/etc/runlevels/boot/encrypted-workspace"
 
-cat <<EOF > "${apkovl}/etc/motd"
+cat <<"EOF" > "${apkovl}/etc/motd"
 
 # ALPINE LINUX - VOLATILE WORKSTATION
 
@@ -114,7 +114,7 @@ cat <<EOF > "${apkovl}/etc/motd"
 EOF
 
 mkdir -p "${apkovl}/etc/apk"
-cat <<EOF > "${apkovl}/etc/apk/world"
+cat <<"EOF" > "${apkovl}/etc/apk/world"
 alpine-base
 cdrkit
 cryptsetup
