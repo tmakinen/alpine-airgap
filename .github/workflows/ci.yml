@@ -26,7 +26,7 @@ jobs:
         run: shellcheck build.sh
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 15
     permissions:
       contents: read
