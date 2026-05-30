@@ -55,23 +55,48 @@ alias poweroff="doas poweroff"
 alias reboot="doas reboot"
 EOF
 
-mkdir -p "${apkovl}/etc/local.d" "${apkovl}/etc/runlevels/default"
-cat <<"EOF" > "${apkovl}/etc/local.d/encrypted-workspace.start"
-#!/bin/sh
-set -eu
-umask 077
-dd if=/dev/zero of=/run/workspace.img bs=1M count=100
-_loopdev="$(losetup -f)"
-losetup "$_loopdev" /run/workspace.img
-dd if=/dev/urandom bs=32 count=1 2> /dev/null | cryptsetup open --type plain "$_loopdev" secure-workspace -d -
-mkfs.ext4 /dev/mapper/secure-workspace
-mkdir /workspace
-mount -t ext4 /dev/mapper/secure-workspace /workspace
-chown airgap:airgap /workspace
-chmod 0700 /workspace
+mkdir -p "${apkovl}/etc/init.d"
+cat <<"EOF" > "${apkovl}/etc/init.d/encrypted-workspace"
+#!/sbin/openrc-run
+
+description="Manages volatile encrypted RAM workspace"
+
+depend() {
+    need localmount
+    after bootmisc
+}
+
+start() {
+    ebegin "Initializing encrypted RAM workspace"
+    dd if=/dev/zero of=/run/workspace.img bs=1M count=100 status=none
+    _loopdev="$(losetup -f)"
+    losetup "$_loopdev" /run/workspace.img
+
+    dd if=/dev/urandom bs=32 count=1 status=none | cryptsetup open --type plain "$_loopdev" encrypted-workspace --cipher aes-xts-plain64 --key-size 512 -d -
+    mkfs.ext4 -q /dev/mapper/encrypted-workspace
+
+    mkdir /workspace
+    mount -t ext4 /dev/mapper/encrypted-workspace /workspace
+    chown airgap:airgap /workspace
+    chmod 0700 /workspace
+
+    eend $?
+}
+
+stop() {
+    ebegin "Tearing down encrypted RAM workspace"
+
+    umount -l /workspace
+    cryptsetup close encrypted-workspace
+    losetup -d "$(losetup -a | awk -F: '/\/run\/workspace\.img$/ { print $1 }')"
+    dd if=/dev/zero of=/run/workspace.img bs=1M count=10 status=none
+    rm -f /run/workspace.img
+
+    eend $?
+}
 EOF
-ln -s "/etc/init.d/local" "${apkovl}/etc/runlevels/default/local"
-chmod +x "${apkovl}/etc/local.d/encrypted-workspace.start"
+chmod +x "${apkovl}/etc/init.d/encrypted-workspace"
+ln -s "/etc/init.d/encrypted-workspace" "${apkovl}/etc/runlevels/boot/encrypted-workspace"
 
 cat <<EOF > "${apkovl}/etc/motd"
 
