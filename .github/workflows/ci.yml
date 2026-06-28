@@ -45,3 +45,9 @@ jobs:
           persist-credentials: false
       - name: Build image
         run: make
+      - name: Save image as artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: alpine-airgap-images
+          path: *.iso
+          retention-days: 7
