@@ -1,0 +1,95 @@
+---
+name: Update Alpine Linux version
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      ALPINE_VERSION: ${{ steps.current.outputs.ALPINE_VERSION }}
+      ALPINE_LATEST: ${{ steps.latest.outputs.ALPINE_LATEST }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check current version
+        id: current
+        run: |
+          VERSION="$(awk '{ if ($1 == "ALPINE_VER" && $2 == ":=") print $3 }' Makefile)"
+          echo "ALPINE_VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
+      - name: Check latest version
+        id: latest
+        run: |
+          LATEST="$(curl -sSf https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/x86_64/latest-releases.yaml | yq '.[0].version')"
+          echo "ALPINE_LATEST=${LATEST}" >> "$GITHUB_OUTPUT"
+      - name: Check if pull request is already open
+        id: pr
+        run: |
+          COUNT="$(gh pr list \
+              --state open \
+              --base main \
+              --head autoupdate/alpine-${ALPINE_LATEST} \
+              --json number \
+              --jq 'length')"
+          if [ "$COUNT" -gt 0 ]; then
+              echo "PR_EXISTS=true" >> "$GITHUB_OUTPUT"
+          else
+              echo "PR_EXISTS=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          ALPINE_LATEST=${{ steps.latest.outputs.ALPINE_LATEST }}
+
+  update:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    needs: check-versions
+    if: |
+      needs.check-versions.outputs.ALPINE_VERSION != needs.check-versions.outputs.ALPINE_LATEST &&
+      needs.check-versions.outputs.PR_EXISTS != 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Update Makefile
+        run: |
+          sed -i -e "s/^\(ALPINE_VER[ ]*:=[ ]*\).*/\1${ALPINE_LATEST}/" Makefile 
+        env:
+          ALPINE_LATEST: ${{ needs.check-versions.outputs.ALPINE_LATEST }}
+      - name: Commit changes and create pull request
+        run: |
+          BRANCH="autoupdate/alpine-${ALPINE_LATEST}"
+          MSG="Bump Alpine Linux from ${ALPINE_VERSION} to ${ALPINE_LATEST}"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add Makefile
+          git commit -m "$MSG"
+          git push origin "$BRANCH" --force
+
+          gh pr create \
+              --title "$MSG" \
+              --body "Bumps [Alpine Linux](https://alpinelinux.org/) from ${ALPINE_VERSION} to ${ALPINE_LATEST}" \
+              --base "main" \
+              --head "$BRANCH"
+        env:
+          ALPINE_LATEST: ${{ needs.check-versions.outputs.ALPINE_LATEST }}
+          ALPINE_VERSION: ${{ needs.check-versions.outputs.ALPINE_VERSION }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
