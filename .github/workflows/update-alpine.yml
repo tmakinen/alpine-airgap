@@ -50,6 +50,7 @@ jobs:
           fi
         env:
           ALPINE_LATEST: ${{ steps.latest.outputs.ALPINE_LATEST }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   update:
     runs-on: ubuntu-slim
