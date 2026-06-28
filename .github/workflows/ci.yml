@@ -50,5 +50,5 @@ jobs:
         with:
           name: alpine-airgap-images
           path: |
-            *.iso
+            alpine-airgap-*.iso
           retention-days: 7
