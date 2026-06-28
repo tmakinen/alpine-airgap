@@ -49,7 +49,7 @@ jobs:
               echo "PR_EXISTS=false" >> "$GITHUB_OUTPUT"
           fi
         env:
-          ALPINE_LATEST=${{ steps.latest.outputs.ALPINE_LATEST }}
+          ALPINE_LATEST: ${{ steps.latest.outputs.ALPINE_LATEST }}
 
   update:
     runs-on: ubuntu-slim
