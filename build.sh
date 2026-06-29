@@ -143,4 +143,9 @@ xorrisofs \
     -no-emul-boot \
     -boot-load-size 4 \
     -boot-info-table \
+    -eltorito-alt-boot \
+    -e boot/grub/efi.img \
+    -no-emul-boot \
+    -isohybrid-mbr "${tmpdir}/iso/boot/syslinux/isohdpfx.bin" \
+    -isohybrid-gpt-basdat \
     -J -R "${tmpdir}/iso/"
