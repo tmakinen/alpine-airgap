@@ -7,9 +7,9 @@ all: alpine-airgap-x86_64.iso
 clean:
 	rm -f *.iso
 
-alpine-extended-$(ALPINE_VER)-x86_64.iso:
+$(ISO_SOURCE):
 	curl --fail -O \
 	    "https://dl-cdn.alpinelinux.org/alpine/v$(ALPINE_BRANCH)/releases/x86_64/$@"
 
-alpine-airgap-x86_64.iso: alpine-extended-$(ALPINE_VER)-x86_64.iso
+alpine-airgap-x86_64.iso: $(ISO_SOURCE)
 	./build.sh "$<"
