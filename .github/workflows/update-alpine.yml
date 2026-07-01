@@ -27,12 +27,12 @@ jobs:
       - name: Check current version
         id: current
         run: |
-          VERSION="$(awk '{ if ($1 == "ALPINE_VER" && $2 == ":=") print $3 }' Makefile)"
+          VERSION="$(awk '{ if ($1 == "ALPINE_TAG" && $2 == ":=") print $3 }' Makefile)"
           echo "ALPINE_VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
       - name: Check latest version
         id: latest
         run: |
-          LATEST="$(curl -sSf https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/x86_64/latest-releases.yaml | yq '.[0].version')"
+          LATEST="$(curl -sSf https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/x86_64/latest-releases.yaml | yq '.[0].version | split(".") | .[0:2] | join(".")')"
           echo "ALPINE_LATEST=${LATEST}" >> "$GITHUB_OUTPUT"
       - name: Check if pull request is already open
         id: pr

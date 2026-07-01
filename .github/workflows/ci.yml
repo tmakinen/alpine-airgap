@@ -23,33 +23,22 @@ jobs:
           persist-credentials: false
       - name: Check for tabs in shell scripts
         run: |
-          ! grep -P "^\t" --line-number build.sh
+          ! grep -P "^\t" --line-number *.sh
       - name: Run ShellCheck
-        run: shellcheck build.sh
+        run: |
+          shellcheck *.sh
 
   build:
-    runs-on: ubuntu-slim
-    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
     needs: shellcheck
     steps:
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install --no-install-recommends \
-              xorriso
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           persist-credentials: false
-      - name: Cache Alpine Linux ISO
-        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
-        with:
-          path: alpine-standard-*.iso
-          key: alpine-iso-${{ hashFiles('Makefile') }}
-          restore-keys: |
-            alpine-iso-
       - name: Build image
         run: make
       - name: Save image as artifact
