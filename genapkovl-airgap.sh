@@ -39,6 +39,7 @@ cryptsetup
 doas
 e2fsprogs
 git
+gpm
 kbd-bkeymaps
 openssh-client
 openssl
@@ -59,6 +60,8 @@ rc_add localmount boot
 rc_add modules boot
 rc_add sysctl boot
 rc_add urandom boot
+
+rc_add gpm default
 
 rc_add killprocs shutdown
 rc_add mount-ro shutdown

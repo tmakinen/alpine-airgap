@@ -9,7 +9,7 @@ profile_airgap() {
     iso_volume_id="ALPINE_AIRGAP"
     output_filename="alpine-airgap-${ALPINE_TAG:-custom}-${arch}.${image_ext}"
 
-    apks="${apks} bash cryptsetup git kbd-bkeymaps"
+    apks="${apks} bash cryptsetup git gpm kbd-bkeymaps"
     apkovl="genapkovl-airgap.sh"
 
     hostname="airgap"
