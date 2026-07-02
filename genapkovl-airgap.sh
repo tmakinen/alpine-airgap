@@ -34,9 +34,11 @@ EOF
 
 makefile root:root 0644 "${tmp}/etc/apk/world" <<"EOF"
 alpine-base
+bash
 cryptsetup
 doas
 e2fsprogs
+git
 kbd-bkeymaps
 openssh-client
 openssl
@@ -71,7 +73,7 @@ if [ -d "${ROOTFS}/etc" ]; then
         cp -a "${ROOTFS}/etc/${f}" "${tmp}/etc/${f}"
     done
     echo "airgap:x:1000:" >> "${tmp}/etc/group"
-    echo "airgap:x:1000:1000:Airgap User:/workspace:/bin/sh" >> "${tmp}/etc/passwd"
+    echo "airgap:x:1000:1000:Airgap User:/workspace:/bin/bash" >> "${tmp}/etc/passwd"
     echo "airgap:::0:::::" >> "${tmp}/etc/shadow"
 fi
 
