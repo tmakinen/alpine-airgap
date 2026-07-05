@@ -14,5 +14,7 @@ profile_airgap() {
     apks="${apks} bash cryptsetup git gpm kbd-bkeymaps"
     apkovl="genapkovl-airgap.sh"
 
+    kernel_cmdline="${kernel_cmdline} nomodeset vga=normal"
+
     hostname="airgap"
 }
