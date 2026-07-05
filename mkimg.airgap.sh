@@ -8,6 +8,7 @@ profile_airgap() {
     desc="Secure baseline environment designed exclusively for offline operations. Includes a pre-packaged suite of utilities required to perform core standalone tasks without network access."
 
     image_ext="iso"
+    output_format="iso"
     arch="x86_64"
 
     apks="${apks} bash cryptsetup git gpm kbd-bkeymaps"
