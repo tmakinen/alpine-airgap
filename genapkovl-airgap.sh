@@ -39,11 +39,18 @@ cryptsetup
 doas
 e2fsprogs
 git
+gnupg
 gpm
+jq
 kbd-bkeymaps
+make
 openssh-client
 openssl
 setup-keymap
+shellcheck
+vim
+xz
+yq-go
 EOF
 
 rc_add devfs sysinit

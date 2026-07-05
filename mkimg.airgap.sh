@@ -11,7 +11,8 @@ profile_airgap() {
     output_format="iso"
     arch="x86_64"
 
-    apks="${apks} bash cryptsetup git gpm kbd-bkeymaps"
+    apkrepos="main community"
+    apks="${apks} bash cryptsetup git gnupg gpm jq kbd-bkeymaps make shellcheck vim xz yq-go"
     apkovl="genapkovl-airgap.sh"
 
     kernel_cmdline="${kernel_cmdline} nomodeset vga=normal"

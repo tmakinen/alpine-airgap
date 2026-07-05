@@ -32,4 +32,5 @@ CMD "/bin/sh" "mkimage.sh" \
      "--arch" "x86_64" \
      "--profile" "airgap" \
      "--tag" "${ALPINE_TAG}" \
-     "--repository" "https://dl-cdn.alpinelinux.org/alpine/v${ALPINE_TAG}/main"
+     "--repository" "https://dl-cdn.alpinelinux.org/alpine/v${ALPINE_TAG}/main" \
+     "--repository" "https://dl-cdn.alpinelinux.org/alpine/v${ALPINE_TAG}/community"
