@@ -21,7 +21,7 @@ RUN set -eux ; \
 
 RUN set -eux ; \
     git clone --depth=1 --branch "${ALPINE_TAG}-stable" \
-        https://gitlab.alpinelinux.org/alpine/aports.git ; \
+        https://github.com/alpinelinux/aports.git ; \
     sed -i 's/--no-chown//g' aports/scripts/mkimage.sh
 
 WORKDIR /aports/scripts
