@@ -85,6 +85,9 @@ KEYMAP="/usr/share/bkeymaps/fi/fi-winkeys.bmap.gz"
 EOF
 rc_add loadkmap boot
 
+cp -a "${ROOTFS}/etc/inittab" "${tmp}/etc/inittab"
+sed -i -e 's/^tty\([2-9]\):/#tty\1:/' "${tmp}/etc/inittab"
+
 if [ -d "${ROOTFS}/etc" ]; then
     for f in passwd group shadow ; do
         cp -a "${ROOTFS}/etc/${f}" "${tmp}/etc/${f}"
