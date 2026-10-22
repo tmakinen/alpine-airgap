@@ -36,6 +36,7 @@ makefile root:root 0644 "${tmp}/etc/apk/world" <<"EOF"
 alpine-base
 bash
 cryptsetup
+dmidecode
 doas
 e2fsprogs
 git
@@ -89,14 +90,22 @@ fi
 
 mkdir -p "${tmp}/etc/doas.d" "${tmp}/etc/profile.d"
 makefile root:root 0600 "${tmp}/etc/doas.d/power.conf" <<"EOF"
-permit persist :airgap
-permit nopass airgap as root cmd poweroff
-permit nopass airgap as root cmd reboot
+permit nopass airgap as root cmd /sbin/poweroff
+permit nopass airgap as root cmd /sbin/reboot
 EOF
 makefile root:root 0644 "${tmp}/etc/profile.d/power.sh" <<"EOF"
 if [ "$(id -u)" != "0" ]; then
-    alias poweroff="doas poweroff"
-    alias reboot="doas reboot"
+    alias poweroff="doas /sbin/poweroff"
+    alias reboot="doas /sbin/reboot"
+fi
+EOF
+
+makefile root:root 0600 "${tmp}/etc/doas.d/dmidecode.conf" <<"EOF"
+permit nopass airgap as root cmd /usr/sbin/dmidecode
+EOF
+makefile root:root 0644 "${tmp}/etc/profile.d/dmidecode.sh" <<"EOF"
+if [ "$(id -u)" != "0" ]; then
+    alias dmidecode="doas /usr/sbin/dmidecode"
 fi
 EOF
 
