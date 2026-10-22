@@ -50,6 +50,7 @@ openssh-client
 openssl
 setup-keymap
 shellcheck
+util-linux
 vim
 xz
 yq-go
@@ -86,6 +87,7 @@ EOF
 rc_add loadkmap boot
 
 cp -a "${ROOTFS}/etc/inittab" "${tmp}/etc/inittab"
+sed -i -e 's/^tty1:.*$/tty1::respawn:\/sbin\/agetty --autologin airgap tty1 linux/' "${tmp}/etc/inittab"
 sed -i -e 's/^tty\([2-9]\):/#tty\1:/' "${tmp}/etc/inittab"
 
 if [ -d "${ROOTFS}/etc" ]; then
