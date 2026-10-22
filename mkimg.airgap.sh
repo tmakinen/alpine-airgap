@@ -12,10 +12,8 @@ profile_airgap() {
     arch="x86_64"
 
     apkrepos="main community"
-    apks="${apks} bash cryptsetup dmidecode git gnupg gpm jq kbd-bkeymaps make shellcheck vim xz yq-go"
+    apks="${apks} bash cryptsetup dmidecode font-terminus git gnupg gpm jq kbd-bkeymaps make shellcheck vim xz yq-go"
     apkovl="genapkovl-airgap.sh"
-
-    kernel_cmdline="${kernel_cmdline} nomodeset vga=normal"
 
     hostname="airgap"
 }

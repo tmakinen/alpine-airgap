@@ -39,6 +39,7 @@ cryptsetup
 dmidecode
 doas
 e2fsprogs
+font-terminus
 git
 gnupg
 gpm
@@ -62,6 +63,7 @@ rc_add procfs sysinit
 rc_add sysfs sysinit
 
 rc_add bootmisc boot
+rc_add consolefont boot
 rc_add hostname boot
 rc_add hwclock boot
 rc_add localmount boot
@@ -73,6 +75,10 @@ rc_add gpm default
 
 rc_add killprocs shutdown
 rc_add mount-ro shutdown
+
+makefile root:root 0644 "${tmp}/etc/conf.d/consolefont" <<"EOF"
+consolefont="ter-v32b.psf.gz"
+EOF
 
 makefile root:root 0644 "${tmp}/etc/conf.d/loadkmap" <<"EOF"
 KEYMAP="/usr/share/bkeymaps/fi/fi-winkeys.bmap.gz"
