@@ -35,6 +35,7 @@ EOF
 makefile root:root 0644 "${tmp}/etc/apk/world" <<"EOF"
 alpine-base
 bash
+cdrkit
 cryptsetup
 dmidecode
 doas
@@ -97,7 +98,13 @@ if [ -d "${ROOTFS}/etc" ]; then
     echo "airgap:x:1000:" >> "${tmp}/etc/group"
     echo "airgap:x:1000:1000:Airgap User:/workspace:/bin/bash" >> "${tmp}/etc/passwd"
     echo "airgap:::0:::::" >> "${tmp}/etc/shadow"
+    sed -i -e 's/^cdrom:.*:$/\0airgap/' "${tmp}/etc/group"
 fi
+
+makefile root:root 0644 "${tmp}/etc/fstab" <<"EOF"
+/dev/cdrom     /media/cdrom   iso9660   noauto,user,ro,uid=1000,gid=1000   0 0
+/dev/usbdisk   /media/usb     vfat      noauto,user,rw,uid=1000,gid=1000   0 0
+EOF
 
 mkdir -p "${tmp}/etc/doas.d" "${tmp}/etc/profile.d"
 makefile root:root 0600 "${tmp}/etc/doas.d/power.conf" <<"EOF"
