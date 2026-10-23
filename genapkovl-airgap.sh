@@ -91,15 +91,13 @@ cp -a "${ROOTFS}/etc/inittab" "${tmp}/etc/inittab"
 sed -i -e 's/^tty1:.*$/tty1::respawn:\/sbin\/agetty --autologin airgap tty1 linux/' "${tmp}/etc/inittab"
 sed -i -e 's/^tty\([2-9]\):/#tty\1:/' "${tmp}/etc/inittab"
 
-if [ -d "${ROOTFS}/etc" ]; then
-    for f in passwd group shadow ; do
-        cp -a "${ROOTFS}/etc/${f}" "${tmp}/etc/${f}"
-    done
-    echo "airgap:x:1000:" >> "${tmp}/etc/group"
-    echo "airgap:x:1000:1000:Airgap User:/workspace:/bin/bash" >> "${tmp}/etc/passwd"
-    echo "airgap:::0:::::" >> "${tmp}/etc/shadow"
-    sed -i -e 's/^cdrom:.*:$/\0airgap/' "${tmp}/etc/group"
-fi
+for f in passwd group shadow ; do
+    cp -a "${ROOTFS}/etc/${f}" "${tmp}/etc/${f}"
+done
+echo "airgap:x:1000:" >> "${tmp}/etc/group"
+echo "airgap:x:1000:1000:Airgap User:/workspace:/bin/bash" >> "${tmp}/etc/passwd"
+echo "airgap:::0:::::" >> "${tmp}/etc/shadow"
+sed -i -e 's/^cdrom:.*:$/\0airgap/' "${tmp}/etc/group"
 
 makefile root:root 0644 "${tmp}/etc/fstab" <<"EOF"
 /dev/cdrom     /media/cdrom   iso9660   noauto,user,ro,uid=1000,gid=1000   0 0
